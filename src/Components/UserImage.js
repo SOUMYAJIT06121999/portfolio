@@ -15,7 +15,7 @@ const UserImage = () => {
     <h1>REACT.JS DEVELOPER.</h1>
     <div>
        <Link to="/project" className="btn">Projects</Link> 
-       <Link to="/contact" className="btn btn-light">Contact</Link> 
+       <Link to="/contact" className="btn btn-light" >Contact</Link> 
     </div>
     </div>
     </div>

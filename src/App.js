@@ -18,9 +18,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
       <Route path="/about" element={<About/>} />
       <Route path="/contact" element={<Contact/>} />
     </Routes>
-    <Router/>
-  )
-  
- }
+    </Router>
+    )}
 
 export default App;

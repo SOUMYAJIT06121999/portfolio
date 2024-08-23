@@ -7,7 +7,7 @@ const ProjectCardData = [
         imgsrc: pro1,
         title:"TIC-TAC-TOE",
         text:"This project is a simple implementation of the classic Tic Tac Toe game using React. It allows two players to take turns marking spaces in a 3x3 grid, aiming to get three of their symbols (either X or O) in a row, column, or diagonal. The game indicates the winner when one player achieves the winning condition or ends in a draw if the grid is full without a winner.",
-        view: "https://github.com/SOUMYAJIT06121999/tic-tac-toe.git",
+        view: "https://shiny-cuchufli-fa6cc4.netlify.app/",
     },
     {
         imgsrc: pro2,

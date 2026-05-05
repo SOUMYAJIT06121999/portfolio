@@ -1,23 +1,53 @@
 import "./FormStyles.css";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const Form = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [botField, setBotField] = useState("");
+  const [popupMessage, setPopupMessage] = useState("");
+  const [popupType, setPopupType] = useState("success");
 
-  const currentUrl = useMemo(() => {
-    if (typeof window === "undefined") return "";
-    return window.location.href;
-  }, []);
+  useEffect(() => {
+    if (!popupMessage) return undefined;
 
-  const handleSubmit = (e) => {
+    const timer = setTimeout(() => {
+      setPopupMessage("");
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [popupMessage]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     if (botField.trim()) {
-      e.preventDefault();
       return;
     }
 
     setIsSubmitting(true);
+
+    try {
+      const formData = new FormData(e.target);
+      const response = await fetch("https://formsubmit.co/ajax/soumyajitbhadra20@gmail.com", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+
+      setPopupType("success");
+      setPopupMessage("Message has been sent. I will contact you soon.");
+      e.target.reset();
+      setBotField("");
+    } catch (error) {
+      setPopupType("error");
+      setPopupMessage("Try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -37,7 +67,6 @@ const Form = () => {
           <input type="hidden" name="_subject" value="Portfolio Contact: New Message" />
           <input type="hidden" name="_captcha" value="false" />
           <input type="hidden" name="_template" value="table" />
-          <input type="hidden" name="_next" value={currentUrl} />
 
           <label htmlFor="name">Your Name</label>
           <input id="name" name="name" type="text" placeholder="John Doe" required />
@@ -69,10 +98,9 @@ const Form = () => {
             {isSubmitting ? "Sending..." : "Send Message"}
           </button>
 
-          <p className="form-note">
-            On first use, FormSubmit may send an activation email to enable delivery.
-          </p>
         </form>
+
+        {popupMessage && <div className={`form-popup ${popupType}`}>{popupMessage}</div>}
       </div>
     </section>
   );

@@ -8,16 +8,7 @@ const Form = () => {
 
   const currentUrl = useMemo(() => {
     if (typeof window === "undefined") return "";
-
-    const url = new URL(window.location.href);
-    url.searchParams.set("submitted", "true");
-    return url.toString();
-  }, []);
-
-  const isSubmitted = useMemo(() => {
-    if (typeof window === "undefined") return false;
-
-    return new URLSearchParams(window.location.search).get("submitted") === "true";
+    return window.location.href;
   }, []);
 
   const handleSubmit = (e) => {
@@ -78,11 +69,9 @@ const Form = () => {
             {isSubmitting ? "Sending..." : "Send Message"}
           </button>
 
-          {isSubmitted && (
-            <p className="form-success">
-              Your message has been sent. We will contact you soon.
-            </p>
-          )}
+          <p className="form-note">
+            On first use, FormSubmit may send an activation email to enable delivery.
+          </p>
         </form>
       </div>
     </section>

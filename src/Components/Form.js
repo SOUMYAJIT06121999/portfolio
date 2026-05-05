@@ -6,6 +6,12 @@ const Form = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [botField, setBotField] = useState("");
 
+  const isSubmitted = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    const query = new URLSearchParams(window.location.search);
+    return query.get("submitted") === "true";
+  }, []);
+
   const currentUrl = useMemo(() => {
     if (typeof window === "undefined") return "";
     return window.location.href;
@@ -37,7 +43,7 @@ const Form = () => {
           <input type="hidden" name="_subject" value="Portfolio Contact: New Message" />
           <input type="hidden" name="_captcha" value="false" />
           <input type="hidden" name="_template" value="table" />
-          <input type="hidden" name="_next" value={currentUrl} />
+          <input type="hidden" name="_next" value={currentUrl ? `${currentUrl.split("?")[0]}?submitted=true` : ""} />
 
           <label htmlFor="name">Your Name</label>
           <input id="name" name="name" type="text" placeholder="John Doe" required />
@@ -69,9 +75,7 @@ const Form = () => {
             {isSubmitting ? "Sending..." : "Send Message"}
           </button>
 
-          <p className="form-note">
-            On first use, FormSubmit may send an activation email to enable delivery.
-          </p>
+          {isSubmitted && <p className="form-note">Message has been sent. I will contact you soon.</p>}
         </form>
       </div>
     </section>

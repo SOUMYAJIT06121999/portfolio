@@ -20,6 +20,16 @@ const Form = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  const isSubmitted = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    const query = new URLSearchParams(window.location.search);
+    return query.get("submitted") === "true";
+  }, []);
+
+  const currentUrl = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    return window.location.href;
+  }, []);
 
     if (botField.trim()) {
       return;
@@ -67,6 +77,7 @@ const Form = () => {
           <input type="hidden" name="_subject" value="Portfolio Contact: New Message" />
           <input type="hidden" name="_captcha" value="false" />
           <input type="hidden" name="_template" value="table" />
+          <input type="hidden" name="_next" value={currentUrl ? `${currentUrl.split("?")[0]}?submitted=true` : ""} />
 
           <label htmlFor="name">Your Name</label>
           <input id="name" name="name" type="text" placeholder="John Doe" required />
@@ -98,6 +109,7 @@ const Form = () => {
             {isSubmitting ? "Sending..." : "Send Message"}
           </button>
 
+          {isSubmitted && <p className="form-note">Message has been sent. will contact you soon.</p>}
         </form>
 
         {popupMessage && <div className={`form-popup ${popupType}`}>{popupMessage}</div>}

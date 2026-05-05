@@ -1,11 +1,25 @@
 import "./FormStyles.css";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const Form = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [botField, setBotField] = useState("");
+  const [popupMessage, setPopupMessage] = useState("");
+  const [popupType, setPopupType] = useState("success");
 
+  useEffect(() => {
+    if (!popupMessage) return undefined;
+
+    const timer = setTimeout(() => {
+      setPopupMessage("");
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [popupMessage]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
   const isSubmitted = useMemo(() => {
     if (typeof window === "undefined") return false;
     const query = new URLSearchParams(window.location.search);
@@ -17,13 +31,33 @@ const Form = () => {
     return window.location.href;
   }, []);
 
-  const handleSubmit = (e) => {
     if (botField.trim()) {
-      e.preventDefault();
       return;
     }
 
     setIsSubmitting(true);
+
+    try {
+      const formData = new FormData(e.target);
+      const response = await fetch("https://formsubmit.co/ajax/soumyajitbhadra20@gmail.com", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+
+      setPopupType("success");
+      setPopupMessage("Message has been sent. I will contact you soon.");
+      e.target.reset();
+      setBotField("");
+    } catch (error) {
+      setPopupType("error");
+      setPopupMessage("Try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -75,8 +109,10 @@ const Form = () => {
             {isSubmitting ? "Sending..." : "Send Message"}
           </button>
 
-          {isSubmitted && <p className="form-note">Message has been sent. I will contact you soon.</p>}
+          {isSubmitted && <p className="form-note">Message has been sent. will contact you soon.</p>}
         </form>
+
+        {popupMessage && <div className={`form-popup ${popupType}`}>{popupMessage}</div>}
       </div>
     </section>
   );
